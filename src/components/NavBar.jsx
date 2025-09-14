@@ -1,12 +1,30 @@
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/constants";
+import axios from "axios";
+import { removeUser } from "../utils/userSlice";
+
   const NavBar=()=>{
+    const navigate=useNavigate();
+    const dispatch=useDispatch();
     const user=useSelector((store)=>store.user);
-    console.log(user);
+    // console.log(user);
+
+    const handleLogout=async()=>{
+      try{
+         await axios.post(BASE_URL+"/logout",{withCredentials:true})
+         dispatch(removeUser());
+         return navigate("/login");
+      }
+      catch(err)
+      {
+        console.log(err);
+      }
+    }
   return(
   <div className="navbar bg-base-200 shadow-sm ">
   <div className="flex-1">
-    <Link to="/" className="btn btn-ghost text-xl">Heartsy</Link>
+    <Link to="/feed" className="btn btn-ghost text-xl">Heartsy</Link>
   </div>
 
   {user&&(
@@ -30,8 +48,9 @@ import { Link } from "react-router-dom";
             <span className="badge">New</span>
           </Link>
         </li>
-        <li><a>Settings</a></li>
-        <li><a>Logout</a></li>
+        <li><Link to='/Connections'>Connections</Link></li>
+          <li><Link to='/requests'>Requests</Link></li>
+        <li><a onClick={handleLogout}>Logout</a></li>
       </ul>
     </div>
       </div>
